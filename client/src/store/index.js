@@ -237,6 +237,22 @@ export const useGlobalStore = () => {
         });
     }
 
+    // THIS FUNCTION CREATES A NEW LIST
+    store.createNewList = function () {
+        async function asyncCreateNewList() {
+            let newList = {
+                "name": "Untitled",
+                "items": ["?","?","?","?","?"]
+            }
+            const response = await api.createTop5List(newList);
+            if(response.data.success){
+                store.loadIdNamePairs();
+                store.setCurrentList(response.data.top5List._id);
+            }
+        }
+        asyncCreateNewList();
+    }
+
     // THIS GIVES OUR STORE AND ITS REDUCER TO ANY COMPONENT THAT NEEDS IT
     return { store, storeReducer };
 }

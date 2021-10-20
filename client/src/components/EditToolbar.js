@@ -10,8 +10,18 @@ import { useHistory } from 'react-router-dom'
 function EditToolbar() {
     const { store } = useContext(GlobalStoreContext);
     const history = useHistory();
-
-    let enabledButtonClass = "top5-button";
+    let undoClass = "top5-button";
+    let redoClass = "top5-button";
+    let closeClass = "top5-button";
+    if (!store.hasTransactionToUndo()) {
+        undoClass = "top5-button-disabled";
+    }
+    if (!store.hasTransactionToRedo()) {
+        redoClass = "top5-button-disabled";
+    }
+    if (!store.currentList) {
+        closeClass = "top5-button-disabled";
+    }
     function handleUndo() {
         store.undo();
     }
@@ -22,9 +32,11 @@ function EditToolbar() {
         history.push("/");
         store.closeCurrentList();
     }
-    let editStatus = false;
-    if (store.isListNameEditActive) {
-        editStatus = true;
+    let editStatus = store.isListNameEditActive || store.isItemEditActive;
+    if (editStatus) {
+        undoClass = "top5-button-disabled";
+        redoClass = "top5-button-disabled";
+        closeClass = "top5-button-disabled";
     }
     return (
         <div id="edit-toolbar">
@@ -32,21 +44,21 @@ function EditToolbar() {
                 disabled={editStatus}
                 id='undo-button'
                 onClick={handleUndo}
-                className={enabledButtonClass}>
+                className={undoClass}>
                 &#x21B6;
             </div>
             <div
                 disabled={editStatus}
                 id='redo-button'
                 onClick={handleRedo}
-                className={enabledButtonClass}>
+                className={redoClass}>
                 &#x21B7;
             </div>
             <div
                 disabled={editStatus}
                 id='close-button'
                 onClick={handleClose}
-                className={enabledButtonClass}>
+                className={closeClass}>
                 &#x24E7;
             </div>
         </div>

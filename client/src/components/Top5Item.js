@@ -49,10 +49,10 @@ function Top5Item(props) {
     }
 
     function toggleEdit() {
+        setEditing(!editing);
         if (editing) {
             store.setItemEdit();
         }
-        setEditing(!editing);
     }
 
     function handleKeyPress(event) {

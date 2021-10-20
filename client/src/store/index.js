@@ -324,6 +324,14 @@ export const useGlobalStore = () => {
         modal.classList.remove("is-visible");
     }
 
+    store.hasTransactionToUndo = function () {
+        return tps.hasTransactionToUndo();
+    }
+
+    store.hasTransactionToRedo = function () {
+        return tps.hasTransactionToRedo();
+    }
+
     // THIS GIVES OUR STORE AND ITS REDUCER TO ANY COMPONENT THAT NEEDS IT
     return { store, storeReducer };
 }

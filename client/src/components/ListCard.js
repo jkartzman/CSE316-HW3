@@ -76,6 +76,7 @@ function ListCard(props) {
                 type="button"
                 id={"delete-list-" + idNamePair._id}
                 className="list-card-button"
+                onClick={(event) => {event.stopPropagation(); store.readyForDelete(idNamePair._id)}}
                 value={"\u2715"}
             />
             <input

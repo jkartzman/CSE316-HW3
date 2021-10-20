@@ -19,7 +19,8 @@ export const GlobalStoreActionType = {
     LOAD_ID_NAME_PAIRS: "LOAD_ID_NAME_PAIRS",
     SET_CURRENT_LIST: "SET_CURRENT_LIST",
     SET_LIST_NAME_EDIT_ACTIVE: "SET_LIST_NAME_EDIT_ACTIVE",
-    CHANGE_ITEM_NAME: "CHANGE_ITEM_NAME"
+    CHANGE_ITEM_NAME: "CHANGE_ITEM_NAME",
+    READY_FOR_DELETION: "READY_FOR_DELETION"
 }
 
 // WE'LL NEED THIS TO PROCESS TRANSACTIONS
@@ -98,11 +99,22 @@ export const useGlobalStore = () => {
                     listMarkedForDeletion: null
                 });
             }
+            // GET LIST READY FOR DELETION
+            case GlobalStoreActionType.READY_FOR_DELETION: {
+                return setStore({
+                    idNamePairs: store.idNamePairs,
+                    currentList: null,
+                    newListCounter: store.newListCounter,
+                    isListNameEditActive: false,
+                    isItemEditActive: false,
+                    listMarkedForDeletion: payload
+                });
+            }
             // CHANGE ITEM NAME
             case GlobalStoreActionType.CHANGE_ITEM_NAME: {
                 return setStore({
                     idNamePairs: store.idNamePairs,
-                    currentList: payload,
+                    currentList: store.currentList,
                     newListCounter: store.newListCounter,
                     isListNameEditActive: false,
                     isItemEditActive: true,
@@ -267,7 +279,17 @@ export const useGlobalStore = () => {
         });
     }
 
-    // THIS FUNCTION CREATES A NEW LIST
+    // THIS FUNCTION ENABLES THE PROCESS OF DELETING A LIST
+    store.readyForDelete = function (id) {
+        let modal = document.getElementById("delete-modal");
+        modal.classList.add("is-visible");
+        storeReducer({
+            type: GlobalStoreActionType.READY_FOR_DELETION,
+            payload: id
+        })
+    }
+
+    // CREATES LIST
     store.createNewList = function () {
         async function asyncCreateNewList() {
             let newList = {
@@ -281,6 +303,25 @@ export const useGlobalStore = () => {
             }
         }
         asyncCreateNewList();
+    }
+
+    // DELETE LIST
+    store.deleteMarkedList = function() {
+        console.log(store.listMarkedForDeletion);
+        async function asyncDelete(listID) {
+            let response = await api.deleteTop5ListById(listID);
+            if (response.data.success) {
+                store.loadIdNamePairs();
+            }
+        }
+        asyncDelete(store.listMarkedForDeletion);
+        store.hideDeleteListModal();
+    }
+
+    // HIDE DELETE LIST MODAL
+    store.hideDeleteListModal = function (listToDelete) {
+        let modal = document.getElementById("delete-modal");
+        modal.classList.remove("is-visible");
     }
 
     // THIS GIVES OUR STORE AND ITS REDUCER TO ANY COMPONENT THAT NEEDS IT

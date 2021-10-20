@@ -43,6 +43,11 @@ function Top5Item(props) {
         store.addMoveItemTransaction(sourceId, targetId);
     }
 
+    function handleToggleEdit(event) {
+        event.stopPropagation();
+        toggleEdit();
+    }
+
     function toggleEdit() {
         if (editing) {
             store.setItemEdit();
@@ -95,7 +100,7 @@ function Top5Item(props) {
                     id={"edit-item-" + index + 1}
                     className="list-card-button"
                     value={"\u270E"}
-                    onClick={toggleEdit}
+                    onClick={handleToggleEdit}
                 />
                 {props.text}
             </div>);
